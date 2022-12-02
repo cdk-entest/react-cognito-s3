@@ -38,3 +38,28 @@ then run the app
 ```bash
 npm start
 ```
+
+## Basic Router
+
+```js
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <LoginForm></LoginForm>,
+  },
+  {
+    path: "/session",
+    element: <SessionPage></SessionPage>,
+  },
+]);
+
+function App() {
+  return (
+    <ChakraProvider>
+      <RouterProvider router={router}></RouterProvider>
+    </ChakraProvider>
+  );
+}
+
+export default App;
+```
