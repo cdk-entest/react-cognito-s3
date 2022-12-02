@@ -8,7 +8,7 @@ import { signUp } from "../services/cognito";
 const SignupForm = ({ setUser }) => {
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
-  const [submit, setSubmit] = useState(false)
+  // const [submit, setSubmit] = useState(false)
 
   const signUpNewAccount = async (username, password) => {
     console.log("sign up ...", username, password)
@@ -18,7 +18,7 @@ const SignupForm = ({ setUser }) => {
       try {
         const user = await signUp(username, password)
         console.log(user)
-        setSubmit(true)
+        // setSubmit(true)
         setUser("CONFIRM")
       } catch (error) {
         console.log(error)
