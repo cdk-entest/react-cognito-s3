@@ -1,102 +1,69 @@
 import {
-  Box,
-  VStack,
-  Button,
   ChakraProvider,
-  Input,
-  Text,
-  Spacer,
-  HStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import LoginForm from "./components/LoginForm";
+import SessionPage from "./components/Session";
+import SignupForm from "./components/SignupForm";
+import ConfirmForm from "./components/Confirm";
+
 import { 
   createBrowserRouter, 
   RouterProvider,
 } from "react-router-dom"
+import { useState } from "react";
 
 
 
-
-const LoginForm = () => {
-  const [name, setName] = useState("");
-  const [pass, setPass] = useState("");
-
-  return (
-    <Box
-      height={"100vh"}
-      margin={"auto"}
-      bg={"gray.200"}
-      display={"flex"}
-      alignContent={"center"}
-      justifyContent={"center"}
-      alignItems={"center"}
-    >
-      <VStack
-        bg={"white"}
-        padding={"30px"}
-        spacing={"20px"}
-        minHeight={"350px"}
-      >
-        <Text fontSize={30}>Sign in to your account</Text>
-        <Spacer></Spacer>
-        <Input
-          padding={"20px"}
-          margin={"20px"}
-          placeholder="Email"
-          value={name}
-          onChange={(event) => {
-            setName(event.target.value);
-          }}
-        ></Input>
-        <Input
-          padding={"20px"}
-          placeholder="Password"
-          value={pass}
-          onChange={(event) => {
-            setPass(event.target.value);
-          }}
-        ></Input>
-        <Spacer></Spacer>
-        <Button marginTop={"20px"} minWidth={"100%"} colorScheme={"purple"}>
-          Sign In
-        </Button>
-        <HStack minW={"100%"} alignContent={"space-between"}>
-          <Text>No account?</Text>
-          <Button fontWeight={"light"} color={"blue"} bg={"white"}>
-            Sign Up
-          </Button>
-        </HStack>
-      </VStack>
-    </Box>
-  );
-};
-
-const SessionPage = () => {
-  return (
-    <Box>
-      <Text>
-        Hello Hai Tran
-      </Text>
-    </Box>
-  )
-}
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <LoginForm></LoginForm>
-  },
-  {
-    path: "/session",
-    element: <SessionPage></SessionPage>
-  }
-])
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <LoginForm></LoginForm>
+//   },
+//   {
+//     path: "/signup",
+//     element: <SignupForm></SignupForm>
+//   },
+//   {
+//     path: "/confirm",
+//     element: <ConfirmForm></ConfirmForm>
+//   },
+//   {
+//     path: "/session",
+//     element: <SessionPage></SessionPage>
+//   }
+// ])
 
 function App() {
+
+  const [auth, setAuth] = useState(null)
+
+  if (auth === "SIGNUP") {
+    return (
+      <ChakraProvider>
+        <SignupForm setUser={setAuth}></SignupForm>
+      </ChakraProvider>
+    )
+  }
+
+  if (auth === "CONFIRM") {
+    return (
+      <ChakraProvider>
+        <ConfirmForm></ConfirmForm>
+      </ChakraProvider>
+    )
+  }
+
+  if (auth) {
+    return (
+      <ChakraProvider>
+        <SessionPage user={auth}></SessionPage>
+      </ChakraProvider>
+    )
+  }
+
   return (
     <ChakraProvider>
-      <RouterProvider router={router}>
-      </RouterProvider> 
+     <LoginForm setAuth={setAuth}></LoginForm>
     </ChakraProvider>
   );
 }
