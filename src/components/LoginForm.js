@@ -59,7 +59,8 @@ const LoginForm = ({ setAuth }) => {
           colorScheme={"purple"}
           onClick={async () => {
             const user = await signIn(name, pass)
-            setAuth(user)
+            setAuth(user["AuthenticationResult"]["AccessToken"])
+            localStorage.setItem("user", user["AuthenticationResult"]["AccessToken"])
           }}
         >
           Sign In

@@ -1,19 +1,22 @@
-import {
-  Box,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Text } from "@chakra-ui/react";
 
 const SessionPage = ({ user }) => {
   return (
     <Box>
-      <Text>
-       AccessToken: {user["AuthenticationResult"]["AccessToken"]} 
-      </Text>
-      <Text>
-        IdToken: {user["AuthenticationResult"]["IdToken"]}
-      </Text>
+      <Text>AccessToken: {user}</Text>
+      <Button
+        colorScheme={"orange"}
+        minWidth={"300px"}
+        padding={"20px"}
+        onClick={async () => {
+          localStorage.clear();
+          window.location.reload()
+        }}
+      >
+        Sign Out
+      </Button>
     </Box>
-  )
-}
+  );
+};
 
-export default SessionPage
+export default SessionPage;

@@ -35,7 +35,7 @@ import { useState } from "react";
 
 function App() {
 
-  const [auth, setAuth] = useState(null)
+  const [auth, setAuth] = useState(localStorage.getItem("user"))
 
   if (auth === "SIGNUP") {
     return (

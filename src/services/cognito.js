@@ -61,5 +61,6 @@ export const signIn = async (username, password) => {
 };
 
 export const signOut = async () => {
+  localStorage.clear()
   console.log("sign out");
 };
