@@ -53,6 +53,7 @@ export const signIn = async (username, password) => {
       })
     );
     console.log("cognito auth: ", response);
+
     return response;
   } catch (error) {
     console.log(error);

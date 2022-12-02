@@ -42,6 +42,7 @@ const SignupForm = ({ setUser }) => {
         padding={"30px"}
         spacing={"20px"}
         minHeight={"350px"}
+        minWidth={"350px"}
       >
         <Text fontSize={30}>Create a new account</Text>
         <Spacer></Spacer>
@@ -68,6 +69,8 @@ const SignupForm = ({ setUser }) => {
           minWidth={"100%"}
           colorScheme={"purple"}
           onClick={async () => {
+            localStorage.setItem("email", name)
+            localStorage.setItem("pass", pass)
             signUpNewAccount(name, pass)
           }}
         >

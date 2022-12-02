@@ -32,6 +32,7 @@ const LoginForm = ({ setAuth }) => {
         padding={"30px"}
         spacing={"20px"}
         minHeight={"350px"}
+        minWidthi={"350px"}
       >
         <Text fontSize={30}>Sign in to your account</Text>
         <Spacer></Spacer>

@@ -48,7 +48,7 @@ function App() {
   if (auth === "CONFIRM") {
     return (
       <ChakraProvider>
-        <ConfirmForm></ConfirmForm>
+        <ConfirmForm setUser={setAuth}></ConfirmForm>
       </ChakraProvider>
     )
   }

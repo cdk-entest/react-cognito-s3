@@ -3,14 +3,13 @@
 
 import { Box, VStack, Button, Input, Text, Spacer } from "@chakra-ui/react";
 import { useState } from "react";
-import { confirm } from "../services/cognito";
+import { confirm, signIn } from "../services/cognito";
 
-const ConfirmForm = () => {
-
-  const [email, setEmail] = useState("") 
+const ConfirmForm = ({ setUser }) => {
+  const [email, setEmail] = useState(localStorage.getItem("email"));
   const [code, setCode] = useState("");
 
- return (
+  return (
     <Box
       height={"100vh"}
       margin={"auto"}
@@ -26,7 +25,7 @@ const ConfirmForm = () => {
         spacing={"20px"}
         minHeight={"350px"}
       >
-        <Text fontSize={30}>Create a new account</Text>
+        <Text fontSize={30}>Please confirm your account</Text>
         <Spacer></Spacer>
         <Input
           padding={"20px"}
@@ -39,7 +38,7 @@ const ConfirmForm = () => {
         ></Input>
         <Input
           padding={"20px"}
-          placeholder="Password"
+          placeholder="Confirm Code"
           value={code}
           onChange={(event) => {
             setCode(event.target.value);
@@ -51,10 +50,24 @@ const ConfirmForm = () => {
           minWidth={"100%"}
           colorScheme={"purple"}
           onClick={async () => {
-           confirm(email, code) 
+            await confirm(email, code);
+            // get auth state or login and set user to localstorage
+            try {
+              const user = await signIn(
+                localStorage.getItem("email"),
+                localStorage.getItem("pass")
+              );
+              setUser(user["AuthenticationResult"]["AccessToken"]);
+              localStorage.setItem(
+                "user",
+                user["AuthenticationResult"]["AccessToken"]
+              );
+            } catch (error) {
+              setUser(null);
+            }
           }}
-       >
-         Confirm 
+        >
+          Confirm
         </Button>
       </VStack>
     </Box>
