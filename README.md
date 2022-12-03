@@ -66,6 +66,9 @@ export default App;
 
 ## Cognito Client
 
+![Untitled Diagram drawio](https://user-images.githubusercontent.com/20411077/205415330-de02051c-9cc0-433d-bc47-72ca90255b78.png)
+
+
 This is a js script to test how Cognito works.
 
 create a cognito client
