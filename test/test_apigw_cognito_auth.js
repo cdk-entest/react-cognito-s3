@@ -47,9 +47,33 @@ const callApi = async () => {
   console.log(status);
 };
 
-callApi();
+// callApi();
 
 // ======================================================
 // send a get request to apigw endpoint with token for auth header
 // ======================================================
+const fetchMessages = async () => {
+  const { data, status } = await axios.get(config.API_URL_MESSAGE, {
+    headers: {
+      Authorization: `Bearer ${response["AuthenticationResult"]["IdToken"]}`,
+    },
+  });
+  console.log(data);
+  console.log(status);
+};
 
+// fetchMessages();
+
+// 
+const testRequest = async () => {
+  const { data, status } = await axios.get(config.API_URL_TEST, {
+    headers: {
+      Authorization: `Bearer ${response["AuthenticationResult"]["IdToken"]}`
+    }
+  })
+  console.log(data)
+  console.log(status)
+}
+
+
+testRequest()

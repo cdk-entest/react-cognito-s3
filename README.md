@@ -272,3 +272,26 @@ export const config = {
 3. enable api gateway cords [out-of-the-box](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors-console.html)
 
 4. search [cors](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_apigateway-readme.html#cross-origin-resource-sharing-cors) in cdk
+
+5. to enable cors for proxy lambda when using cognito authorizer user ppool need to add the OPTIONS http method to api gateway per resource
+
+```tsx
+declare const myResource: apigateway.Resource;
+
+myResource.addCorsPreflight({
+  allowOrigins: ["https://amazon.com"],
+  allowMethods: ["GET", "PUT"],
+});
+```
+
+or
+
+```tsx
+declare const resource: apigateway.Resource;
+
+const subtree = resource.addResource("subtree", {
+  defaultCorsPreflightOptions: {
+    allowOrigins: ["https://amazon.com"],
+  },
+});
+```
