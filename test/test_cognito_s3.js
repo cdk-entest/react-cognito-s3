@@ -25,33 +25,33 @@ const response = await cognitoClient.send(
   })
 )
 
-// console.log('auth res ', response['AuthenticationResult']['IdToken'])
+console.log('auth res ', response['AuthenticationResult']['IdToken'])
 // s3 client with the token 
 // exchange token for credential
-const s3Client = new S3Client({
-  region: config.REGION, 
-  credentials: fromCognitoIdentityPool({
-    cliengConfig: {region: config.REGION}, 
-    identityPoolId: config.IDENTITY_POOL_ID,
-    logins: {
-      [config.COGNITO_POOL_ID]:response['AuthenticationResult']['IdToken'] 
-    }
-  })
-})
+// const s3Client = new S3Client({
+//   region: config.REGION, 
+//   credentials: fromCognitoIdentityPool({
+//     cliengConfig: {region: config.REGION}, 
+//     identityPoolId: config.IDENTITY_POOL_ID,
+//     logins: {
+//       [config.COGNITO_POOL_ID]:response['AuthenticationResult']['IdToken'] 
+//     }
+//   })
+// })
 
-// send s3 list objects command 
-const command = new ListObjectsCommand({
-  Bucket: config.BUCKET,
-  Prefix: 'public/'
-}) 
+// // send s3 list objects command 
+// const command = new ListObjectsCommand({
+//   Bucket: config.BUCKET,
+//   Prefix: 'public/'
+// }) 
 
-try {
-  const result = await s3Client.send(command)
-  console.log(result['Contents'])
+// try {
+//   const result = await s3Client.send(command)
+//   console.log(result['Contents'])
 
-} catch(error){
-  console.log(error)
-}
+// } catch(error){
+//   console.log(error)
+// }
 
 const credential = fromCognitoIdentityPool({
     cliengConfig: {region: config.REGION}, 

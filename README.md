@@ -68,7 +68,6 @@ export default App;
 
 ![Untitled Diagram drawio](https://user-images.githubusercontent.com/20411077/205415330-de02051c-9cc0-433d-bc47-72ca90255b78.png)
 
-
 This is a js script to test how Cognito works.
 
 create a cognito client
@@ -135,4 +134,27 @@ try {
 } catch (error) {
   console.log(error);
 }
+```
+
+## Troubleshooting
+
+the configuration and COGNITO_POOL_ID should look like
+
+```js
+"COGNITO_POOL_ID": "cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_xxx"
+```
+
+and the config.js
+
+```js
+export const config = {
+  USERNAME: "xxx@xxx.io",
+  PASSWORD: "xxx",
+  COGNITO_POOL_ID:
+    "cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_xxx",
+  IDENTITY_POOL_ID: "ap-southeast-1:xxx",
+  CLIENT_ID: "xxx",
+  REGION: "ap-southeast-1",
+  BUCKET: "xxx",
+};
 ```
