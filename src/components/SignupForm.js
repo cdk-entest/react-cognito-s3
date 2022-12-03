@@ -19,7 +19,7 @@ const SignupForm = ({ setUser }) => {
         const user = await signUp(username, password)
         console.log(user)
         // setSubmit(true)
-        setUser("CONFIRM")
+        setUser({ state: "CONFIRM", username: username, password: password })
       } catch (error) {
         console.log(error)
         setUser(null)

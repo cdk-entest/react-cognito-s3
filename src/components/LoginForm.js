@@ -32,7 +32,7 @@ const LoginForm = ({ setAuth }) => {
         padding={"30px"}
         spacing={"20px"}
         minHeight={"350px"}
-        minWidthi={"350px"}
+        minWidth={"350px"}
       >
         <Text fontSize={30}>Sign in to your account</Text>
         <Spacer></Spacer>
@@ -60,7 +60,7 @@ const LoginForm = ({ setAuth }) => {
           colorScheme={"purple"}
           onClick={async () => {
             const user = await signIn(name, pass)
-            setAuth(user["AuthenticationResult"]["AccessToken"])
+            setAuth({state: "AUTHENTICATED", AccessToken: user["AuthenticationResult"]["AccessToken"]})
             localStorage.setItem("user", user["AuthenticationResult"]["AccessToken"])
           }}
         >
@@ -70,7 +70,7 @@ const LoginForm = ({ setAuth }) => {
           <Text>No account?</Text>
           <Button fontWeight={"light"} color={"blue"} bg={"white"}
             onClick={() => {
-              setAuth("SIGNUP")
+              setAuth({ state: "SIGNUP"})
             }}
           >
             Sign Up

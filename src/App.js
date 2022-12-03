@@ -35,9 +35,9 @@ import { useState } from "react";
 
 function App() {
 
-  const [auth, setAuth] = useState(localStorage.getItem("user"))
+  const [auth, setAuth] = useState({state: "LOGIN"})
 
-  if (auth === "SIGNUP") {
+  if (auth.state === "SIGNUP") {
     return (
       <ChakraProvider>
         <SignupForm setUser={setAuth}></SignupForm>
@@ -45,15 +45,15 @@ function App() {
     )
   }
 
-  if (auth === "CONFIRM") {
+  if (auth.state === "CONFIRM") {
     return (
       <ChakraProvider>
-        <ConfirmForm setUser={setAuth}></ConfirmForm>
+        <ConfirmForm setUser={setAuth} user={auth}></ConfirmForm>
       </ChakraProvider>
     )
   }
 
-  if (auth) {
+  if (auth.state === "AUTHENTICATED") {
     return (
       <ChakraProvider>
         <SessionPage user={auth}></SessionPage>

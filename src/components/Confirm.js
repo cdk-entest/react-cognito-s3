@@ -5,7 +5,7 @@ import { Box, VStack, Button, Input, Text, Spacer } from "@chakra-ui/react";
 import { useState } from "react";
 import { confirm, signIn } from "../services/cognito";
 
-const ConfirmForm = ({ setUser }) => {
+const ConfirmForm = ({ setUser, user }) => {
   const [email, setEmail] = useState(localStorage.getItem("email"));
   const [code, setCode] = useState("");
 
@@ -53,14 +53,17 @@ const ConfirmForm = ({ setUser }) => {
             await confirm(email, code);
             // get auth state or login and set user to localstorage
             try {
-              const user = await signIn(
-                localStorage.getItem("email"),
-                localStorage.getItem("pass")
+              const response = await signIn(
+                // localStorage.getItem("email"),
+                // localStorage.getItem("pass")
+                user.username, 
+                user.password
               );
-              setUser(user["AuthenticationResult"]["AccessToken"]);
+              setUser({ state: "AUTHENTICATED", AccessToken: response["AuthenticationResult"]["AccessToken"]})
+              // setUser(user["AuthenticationResult"]["AccessToken"]);
               localStorage.setItem(
                 "user",
-                user["AuthenticationResult"]["AccessToken"]
+                response["AuthenticationResult"]["AccessToken"]
               );
             } catch (error) {
               setUser(null);
