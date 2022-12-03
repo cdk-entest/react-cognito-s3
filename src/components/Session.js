@@ -41,7 +41,7 @@ const ListImages = ({ user, images, setImageUrl }) => {
         >
           <Text>{image}</Text>
           <Button
-            colorScheme={"teal"}
+            colorScheme={"purple"}
             onClick={async () => {
               const url = await getS3Object(user.IdToken, image);
               setImageUrl(url);

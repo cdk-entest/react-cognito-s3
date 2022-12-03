@@ -19,7 +19,7 @@ export const signUp = async (username, password) => {
         Password: password,
       })
     );
-    console.log(response);
+    // console.log(response);
   } catch (error) {
     console.log(error);
   }
@@ -52,7 +52,7 @@ export const signIn = async (username, password) => {
         ClientId: config.CLIENT_ID,
       })
     );
-    console.log("cognito auth: ", response);
+    // console.log("cognito auth: ", response);
 
     return response;
   } catch (error) {

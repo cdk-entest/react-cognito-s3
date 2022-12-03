@@ -61,7 +61,7 @@ const LoginForm = ({ setAuth }) => {
           onClick={async () => {
             const user = await signIn(name, pass)
             setAuth({state: "AUTHENTICATED", IdToken: user["AuthenticationResult"]["IdToken"]})
-            localStorage.setItem("user", user["AuthenticationResult"]["AccessToken"])
+            // localStorage.setItem("user", user["AuthenticationResult"]["AccessToken"])
           }}
         >
           Sign In

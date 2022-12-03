@@ -7,7 +7,7 @@ import {
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-export const listObjects = async (idToken) => {
+export const listObjects = async (idToken, prefix="public/") => {
   const s3Client = new S3Client({
     region: config.REGION,
     credentials: fromCognitoIdentityPool({
@@ -21,13 +21,16 @@ export const listObjects = async (idToken) => {
 
   const command = new ListObjectsCommand({
     Bucket: config.BUCKET,
-    Prefix: "public/",
+    Prefix: prefix,
   });
 
   try {
     const result = await s3Client.send(command);
-    console.log("s3 list: ", result);
-    return result["Contents"];
+    // console.log("s3 list: ", result);
+    // exclude the prefix itself 
+    const allItems = result["Contents"]
+    const items = allItems.filter(item => item.Key != prefix)
+    return items;
   } catch (error) {
     console.log(error);
     return [];
