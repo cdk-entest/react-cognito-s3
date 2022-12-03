@@ -246,7 +246,7 @@ const ViewImage = ({ imageUrl }) => {
 
 ## Troubleshooting
 
-the configuration and COGNITO_POOL_ID should look like
+1. the configuration and COGNITO_POOL_ID should look like
 
 ```js
 "COGNITO_POOL_ID": "cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_xxx"
@@ -266,3 +266,9 @@ export const config = {
   BUCKET: "xxx",
 };
 ```
+
+2. please ensure deploying the api after changes
+
+3. enable api gateway cords [out-of-the-box](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors-console.html)
+
+4. search [cors](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_apigateway-readme.html#cross-origin-resource-sharing-cors) in cdk

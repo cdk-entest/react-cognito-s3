@@ -5,12 +5,13 @@ import { config } from "../config";
 
 const fetchData = async (token) => {
   const { data, status } = await axios.get(config.API_URL_MESSAGE, {
-    crossdomain: true,
+    // crossdomain: true,
     headers: {
-      Authorization: `Bearer ${token}`,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     },
   });
-  // console.log(data);
+  console.log(data);
   console.log(status);
 };
 

@@ -13,6 +13,8 @@ import {
 } from "@aws-cdk/aws-cognito-identitypool-alpha";
 
 export class CognitoDemoStack extends Stack {
+  public readonly userPool: string;
+
   constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props);
 
@@ -80,7 +82,6 @@ export class CognitoDemoStack extends Stack {
     bucket.grantRead(identityPool.authenticatedRole);
 
     // output
-
     new CfnOutput(this, "CognitoPoolId", {
       exportName: "CognitoPoolId",
       value: userPool.userPoolId,
@@ -90,5 +91,8 @@ export class CognitoDemoStack extends Stack {
       exportName: "IdentityPoolId",
       value: identityPool.identityPoolId,
     });
+
+    //  public readonly output
+    this.userPool = userPool.userPoolArn;
   }
 }

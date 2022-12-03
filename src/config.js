@@ -7,5 +7,6 @@ export const config = {
   "CLIENT_ID": "5p914g870q1si8ddp4at7sve2e",
   "REGION": "ap-southeast-1",
   "BUCKET": "cognito-demo-bucket-392194582387-1",
-  "API_URL_MESSAGE": "https://vyrb4lx0cc.execute-api.ap-southeast-1.amazonaws.com/prod/message"
+  "API_URL_MESSAGE": "https://vyrb4lx0cc.execute-api.ap-southeast-1.amazonaws.com/prod/message",
+  "API_URL_TEST": "https://vyrb4lx0cc.execute-api.ap-southeast-1.amazonaws.com/prod/book"
 }
