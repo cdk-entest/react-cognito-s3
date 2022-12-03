@@ -1,4 +1,4 @@
-import { config } from "./../../config";
+import { config } from "../config";
 import {
   S3Client,
   ListObjectsCommand,
@@ -7,7 +7,7 @@ import {
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-export const listObjects = async (idToken: string) => {
+export const listObjects = async (idToken) => {
   const s3Client = new S3Client({
     region: config.REGION,
     credentials: fromCognitoIdentityPool({
@@ -34,7 +34,7 @@ export const listObjects = async (idToken: string) => {
   }
 };
 
-export const getS3Object = async (idToken: string, key: string) => {
+export const getS3Object = async (idToken, key) => {
   const s3Client = new S3Client({
     region: config.REGION,
     credentials: fromCognitoIdentityPool({
