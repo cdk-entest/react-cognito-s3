@@ -66,17 +66,7 @@ export default App;
 
 ## Cognito Client
 
-This is a js script to test how Cognito works. Dependencies
-
-```js
-import { S3Client, ListObjectsCommand } from "@aws-sdk/client-s3";
-import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
-import {
-  CognitoIdentityProviderClient,
-  InitiateAuthCommand,
-} from "@aws-sdk/client-cognito-identity-provider";
-import { config } from "./config.js";
-```
+This is a js script to test how Cognito works.
 
 create a cognito client
 
@@ -104,6 +94,21 @@ const response = await cognitoClient.send(
 exchange token for aws credentials to access s3, this done via s3Client
 
 ```js
+const credential = fromCognitoIdentityPool({
+  cliengConfig: { region: config.REGION },
+  identityPoolId: config.IDENTITY_POOL_ID,
+  logins: {
+    [config.COGNITO_POOL_ID]: response["AuthenticationResult"]["IdToken"],
+  },
+});
+
+const retrievs = await credential.call();
+console.log(retrievs);
+```
+
+given the credentials, we can access S3 data
+
+```js
 const s3Client = new S3Client({
   region: config.REGION,
   credentials: fromCognitoIdentityPool({
@@ -114,11 +119,8 @@ const s3Client = new S3Client({
     },
   }),
 });
-```
 
-send s3 list object commands
-
-```js
+// send s3 list objects command
 const command = new ListObjectsCommand({
   Bucket: config.BUCKET,
   Prefix: "public/",
@@ -130,15 +132,4 @@ try {
 } catch (error) {
   console.log(error);
 }
-
-const credential = fromCognitoIdentityPool({
-  cliengConfig: { region: config.REGION },
-  identityPoolId: config.IDENTITY_POOL_ID,
-  logins: {
-    [config.COGNITO_POOL_ID]: response["AuthenticationResult"]["IdToken"],
-  },
-});
-
-const retrievs = await credential.call();
-console.log(retrievs);
 ```
