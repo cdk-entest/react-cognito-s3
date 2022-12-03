@@ -59,18 +59,32 @@ const LoginForm = ({ setAuth }) => {
           minWidth={"100%"}
           colorScheme={"purple"}
           onClick={async () => {
-            const user = await signIn(name, pass)
-            setAuth({state: "AUTHENTICATED", IdToken: user["AuthenticationResult"]["IdToken"]})
-            // localStorage.setItem("user", user["AuthenticationResult"]["AccessToken"])
+            const user = await signIn(name, pass);
+            setAuth({
+              state: "AUTHENTICATED",
+              IdToken: user["AuthenticationResult"]["IdToken"],
+            });
+
+            // not good 
+            localStorage.setItem(
+              "user",
+              JSON.stringify({
+                state: "AUTHENTICATED",
+                IdToken: user["AuthenticationResult"]["IdToken"],
+              })
+            );
           }}
         >
           Sign In
         </Button>
         <HStack minW={"100%"} alignContent={"space-between"}>
           <Text>No account?</Text>
-          <Button fontWeight={"light"} color={"blue"} bg={"white"}
+          <Button
+            fontWeight={"light"}
+            color={"blue"}
+            bg={"white"}
             onClick={() => {
-              setAuth({ state: "SIGNUP"})
+              setAuth({ state: "SIGNUP" });
             }}
           >
             Sign Up

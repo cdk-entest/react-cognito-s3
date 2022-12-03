@@ -1,71 +1,60 @@
-import {
-  ChakraProvider,
-} from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import LoginForm from "./components/LoginForm";
 import SessionPage from "./components/Session";
 import SignupForm from "./components/SignupForm";
 import ConfirmForm from "./components/Confirm";
+import Message from "./components/Message";
 
-// import { 
-//   createBrowserRouter, 
-//   RouterProvider,
-// } from "react-router-dom"
-import { useState } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createContext, useEffect, useState } from "react";
 
-
-
-// const router = createBrowserRouter([
-//   {
-//     path: "/",
-//     element: <LoginForm></LoginForm>
-//   },
-//   {
-//     path: "/signup",
-//     element: <SignupForm></SignupForm>
-//   },
-//   {
-//     path: "/confirm",
-//     element: <ConfirmForm></ConfirmForm>
-//   },
-//   {
-//     path: "/session",
-//     element: <SessionPage></SessionPage>
-//   }
-// ])
+const UserContext = createContext(null)
 
 function App() {
 
-  const [auth, setAuth] = useState({state: "LOGIN"})
+  // TODO: AuthProvider 
+  const [auth, setAuth] = useState(JSON.parse(localStorage.getItem("user")));
 
-  if (auth.state === "SIGNUP") {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <SessionPage user={auth}></SessionPage>,
+    },
+    {
+      path: "/message",
+      element: <Message user={auth}></Message>,
+    },
+  ]);
+
+  if (auth && auth.state === "SIGNUP") {
     return (
       <ChakraProvider>
         <SignupForm setUser={setAuth}></SignupForm>
       </ChakraProvider>
-    )
+    );
   }
 
-  if (auth.state === "CONFIRM") {
+  if (auth && auth.state === "CONFIRM") {
     return (
       <ChakraProvider>
         <ConfirmForm setUser={setAuth} user={auth}></ConfirmForm>
       </ChakraProvider>
-    )
+    );
   }
 
-  if (auth.state === "AUTHENTICATED") {
+  if (auth && auth.state === "AUTHENTICATED") {
     return (
       <ChakraProvider>
-        <SessionPage user={auth}></SessionPage>
+        <RouterProvider router={router}></RouterProvider>
       </ChakraProvider>
-    )
+    );
   }
 
   return (
     <ChakraProvider>
-     <LoginForm setAuth={setAuth}></LoginForm>
+      <LoginForm setAuth={setAuth}></LoginForm>
     </ChakraProvider>
-  );
+);
 }
 
 export default App;
