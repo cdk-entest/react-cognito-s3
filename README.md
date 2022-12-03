@@ -136,6 +136,114 @@ try {
 }
 ```
 
+get image pre-signed url
+
+```js
+export const getS3Object = async (idToken, key) => {
+  const s3Client = new S3Client({
+    region: config.REGION,
+    credentials: fromCognitoIdentityPool({
+      clientConfig: { region: config.REGION },
+      identityPoolId: config.IDENTITY_POOL_ID,
+      logins: {
+        [config.COGNITO_POOL_ID]: idToken,
+      },
+    }),
+  });
+
+  const command = new GetObjectCommand({
+    Bucket: config.BUCKET,
+    Key: key,
+  });
+
+  const signUrl = await getSignedUrl(s3Client, command);
+
+  return signUrl;
+};
+```
+
+## FrontEnd List of Images
+
+useEffect to load a list of images or objects
+
+```js
+const [images, setImages] = useState([]);
+const [imageUrl, setImageUrl] = useState(null);
+
+const getImages = async () => {
+  const items = await listObjects(user.IdToken);
+  if (items) {
+    const keys = items.map((item) => item["Key"]);
+    setImages(keys);
+  }
+};
+
+useEffect(() => {
+  getImages();
+}, []);
+```
+
+display a list of images
+
+```js
+const ListImages = ({ user, images, setImageUrl }) => {
+  return (
+    <Flex
+      direction={"column"}
+      width={"100%"}
+      // height={"300px"}
+      overflowY={"auto"}
+      marginTop={"20px"}
+      bg={"orange.100"}
+    >
+      {images.map((image, id) => (
+        <Flex
+          key={id}
+          width={"100%"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+          padding={"5px"}
+          backgroundColor={"gray.100"}
+          marginBottom={"5px"}
+        >
+          <Text>{image}</Text>
+          <Button
+            colorScheme={"teal"}
+            onClick={async () => {
+              const url = await getS3Object(user.IdToken, image);
+              setImageUrl(url);
+            }}
+          >
+            Download
+          </Button>
+        </Flex>
+      ))}
+    </Flex>
+  );
+};
+```
+
+load and view an image given the pre-singed url
+
+```js
+const ViewImage = ({ imageUrl }) => {
+  return (
+    <Box
+      bg={"gray.100"}
+      width={"1000px"}
+      height={"500px"}
+      padding={"20px"}
+      display={"flex"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      marginBottom={"20px"}
+    >
+      {imageUrl && <Image src={imageUrl} width="auto" height={"350px"}></Image>}
+    </Box>
+  );
+};
+```
+
 ## Troubleshooting
 
 the configuration and COGNITO_POOL_ID should look like
