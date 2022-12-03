@@ -1,4 +1,12 @@
-import { Box, Button, Text, Image, Flex, VStack, Spacer } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Text,
+  Image,
+  Flex,
+  VStack,
+  Spacer,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { listObjects, getS3Object } from "../services/storage";
 
@@ -8,13 +16,13 @@ const ViewImage = ({ imageUrl }) => {
       bg={"gray.100"}
       width={"1000px"}
       height={"500px"}
-      padding={"20px"}
+      padding={"10px"}
       display={"flex"}
       justifyContent={"center"}
       alignItems={"center"}
       marginBottom={"20px"}
     >
-      {imageUrl && <Image src={imageUrl} width="auto" height={"350px"}></Image>}
+      {imageUrl && <Image src={imageUrl} width="auto" height={"100%"}></Image>}
     </Box>
   );
 };
@@ -34,7 +42,7 @@ const ListImages = ({ user, images, setImageUrl }) => {
           key={id}
           width={"100%"}
           justifyContent={"space-between"}
-          alignItems={'center'}
+          alignItems={"center"}
           padding={"5px"}
           backgroundColor={"gray.100"}
           marginBottom={"5px"}
@@ -80,7 +88,7 @@ const SessionPage = ({ user }) => {
       alignItems={"center"}
     >
       <VStack
-        // minHeight={'100vh'}
+      // minHeight={'100vh'}
       >
         <ViewImage imageUrl={imageUrl}></ViewImage>
         <ListImages
@@ -90,7 +98,7 @@ const SessionPage = ({ user }) => {
         ></ListImages>
         <Spacer></Spacer>
         <Button
-          colorScheme={"orange"}
+          colorScheme={"purple"}
           minWidth={"300px"}
           padding={"20px"}
           onClick={async () => {
