@@ -244,6 +244,61 @@ const ViewImage = ({ imageUrl }) => {
 };
 ```
 
+## Upload Image and Progress
+
+at this moment with AWS SDK JavaScript V3, need to use some modification to check the upload progress
+
+```js
+import { Upload } from "@aws-sdk/lib-storage";
+import { XhrHttpHandler } from "@aws-sdk/xhr-http-handler";
+```
+
+and then the upload progress can be checked as a callback in below code
+
+```js
+export const uploadToS3Progress = async (idToken, file, setProgress) => {
+  // s3 client
+  const s3Client = new S3Client({
+    region: config.REGION,
+    credentials: fromCognitoIdentityPool({
+      clientConfig: { region: config.REGION },
+      identityPoolId: config.IDENTITY_POOL_ID,
+      logins: {
+        [config.COGNITO_POOL_ID]: idToken,
+      },
+    }),
+  });
+
+  const upload = new Upload({
+    client: s3Client,
+    params: {
+      Bucket: config.BUCKET,
+      Key: `public/${file.name}`,
+      Body: file,
+    },
+  });
+
+  upload.on("httpUploadProgress", (progress) => {
+    console.log(progress.loaded);
+    console.log(progress.total);
+    setProgress((progress.loaded / progress.total) * 100.0);
+  });
+
+  await upload.done();
+};
+```
+
+write a processFile function and pass to the upload button in the upload form
+
+```js
+const processFile = async (file, setProgress) => {
+  // handler upload file
+  await uploadToS3Progress(user.IdToken, file, setProgress);
+  // reload list of images
+  await getImages();
+};
+```
+
 ## Troubleshooting
 
 1. the configuration and COGNITO_POOL_ID should look like
@@ -295,3 +350,5 @@ const subtree = resource.addResource("subtree", {
   },
 });
 ```
+
+6. double check the s3 bucket when switching between projects
