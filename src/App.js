@@ -4,6 +4,7 @@ import SessionPage from "./components/Session";
 import SignupForm from "./components/SignupForm";
 import ConfirmForm from "./components/Confirm";
 import Message from "./components/Message";
+import Upload from "./components/Upload";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { createContext, useEffect, useState } from "react";
@@ -19,6 +20,10 @@ function App() {
     {
       path: "/",
       element: <SessionPage user={auth}></SessionPage>,
+    },
+    {
+      path: "/upload",
+      element: <Upload user={auth}></Upload>
     },
     {
       path: "/message",
