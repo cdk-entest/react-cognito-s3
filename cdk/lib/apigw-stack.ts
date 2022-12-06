@@ -14,9 +14,11 @@ import { Construct } from "constructs";
 import * as path from "path";
 import * as fs from "fs";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
+import { Effect } from "aws-cdk-lib/aws-iam";
 
 interface ApigwProps extends StackProps {
   userPool: string;
+  bucketArn: string;
 }
 
 export class ApigwStack extends Stack {
@@ -63,6 +65,59 @@ export class ApigwStack extends Stack {
     //     maxCapacity: 20,
     //   })
     //   .scaleOnUtilization({ targetUtilizationPercent: 75 });
+
+    // ==========================================================
+    // lambda polly text to speech
+    // ==========================================================
+    const roleForLambdaPoly = new aws_iam.Role(this, "RoleForLambdaPolly", {
+      roleName: "RoleForLambdaPolly",
+      assumedBy: new aws_iam.ServicePrincipal("lambda.amazonaws.com"),
+    });
+
+    roleForLambdaPoly.addToPolicy(
+      new aws_iam.PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ["polly:SynthesizeSpeech"],
+        resources: ["*"],
+      })
+    );
+
+    roleForLambdaPoly.addToPolicy(
+      new aws_iam.PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ["s3:*PutObject"],
+        resources: [props.bucketArn, `${props.bucketArn}/*`],
+      })
+    );
+
+    roleForLambdaPoly.addToPolicy(
+      new aws_iam.PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ["dyanmodb:PutItem", "dynamodb:Update*", "dyanmodb:Delete*"],
+        resources: [messageTable.tableArn],
+      })
+    );
+
+    const polly_func = new aws_lambda.Function(this, "PollyLambdaFunction", {
+      functionName: "PollyLambdaFunction",
+      code: aws_lambda.Code.fromInline(
+        fs.readFileSync(
+          path.resolve(__dirname, "./../lambda/polly_handler.py"),
+          {
+            encoding: "utf-8",
+          }
+        )
+      ),
+      timeout: Duration.seconds(10),
+      runtime: aws_lambda.Runtime.PYTHON_3_9,
+      memorySize: 1024,
+      handler: "index.handler",
+      environment: {
+        TABLE_NAME: messageTable.tableName,
+        BUCKET_NAME: `${props.bucketArn.split(":").pop()}`,
+      },
+      role: roleForLambdaPoly,
+    });
 
     // ==========================================================
     // lambda handlers
@@ -119,6 +174,7 @@ export class ApigwStack extends Stack {
     messageTable.grantFullAccess(write_ddb_func);
     messageTable.grantReadData(read_ddb_func);
     messageTable.grantReadData(test_lambda_func);
+    messageTable.grantReadWriteData(polly_func);
 
     // ==========================================================
     // api gateway
@@ -133,7 +189,11 @@ export class ApigwStack extends Stack {
       new aws_iam.PolicyStatement({
         effect: aws_iam.Effect.ALLOW,
         actions: ["lambda:InvokeFunction"],
-        resources: [write_ddb_func.functionArn, read_ddb_func.functionArn],
+        resources: [
+          write_ddb_func.functionArn,
+          read_ddb_func.functionArn,
+          polly_func.functionArn,
+        ],
       })
     );
 
@@ -162,6 +222,7 @@ export class ApigwStack extends Stack {
     //  integrate lambda with apigw
     const message = apigw.root.addResource("message");
     const book = apigw.root.addResource("book");
+    const polly_api_resource = apigw.root.addResource("polly");
 
     // ==========================================================
     // apigw lambda integration
@@ -225,8 +286,39 @@ export class ApigwStack extends Stack {
       }
     );
 
+    polly_api_resource.addMethod(
+      "POST",
+      new aws_apigateway.LambdaIntegration(polly_func, {
+        proxy: true,
+        allowTestInvoke: false,
+        credentialsRole: role,
+        // integrationResponses: [
+        //   {
+        //     statusCode: "200",
+        //   },
+        // ],
+      })
+      // {
+      //   methodResponses: [{ statusCode: "200" }],
+      //   authorizer: new aws_apigateway.CognitoUserPoolsAuthorizer(
+      //     this,
+      //     "messagePostAuthorizer",
+      //     {
+      //       cognitoUserPools: [userPool],
+      //     }
+      //   ),
+      //   authorizationType: aws_apigateway.AuthorizationType.COGNITO,
+      // }
+    );
+
     // cors per resources
     message.addCorsPreflight({
+      allowOrigins: ["*"],
+      allowMethods: ["GET", "POST", "OPTIONS"],
+      allowHeaders: ["*"],
+    });
+
+    polly_api_resource.addCorsPreflight({
       allowOrigins: ["*"],
       allowMethods: ["GET", "POST", "OPTIONS"],
       allowHeaders: ["*"],
