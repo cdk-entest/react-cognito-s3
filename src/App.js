@@ -19,16 +19,20 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <SessionPage user={auth}></SessionPage>,
+      element: <Message user={auth}></Message>,
     },
+    // {
+    //   path: "/",
+    //   element: <SessionPage user={auth}></SessionPage>,
+    // },
     {
       path: "/upload",
       element: <Upload user={auth}></Upload>
     },
-    {
-      path: "/message",
-      element: <Message user={auth}></Message>,
-    },
+    // {
+    //   path: "/message",
+    //   element: <Message user={auth}></Message>,
+    // },
   ]);
 
   if (auth && auth.state === "SIGNUP") {
