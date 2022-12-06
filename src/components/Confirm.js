@@ -56,14 +56,20 @@ const ConfirmForm = ({ setUser, user }) => {
               const response = await signIn(
                 // localStorage.getItem("email"),
                 // localStorage.getItem("pass")
-                user.username, 
+                user.username,
                 user.password
               );
-              setUser({ state: "AUTHENTICATED", AccessToken: response["AuthenticationResult"]["AccessToken"]})
-              // setUser(user["AuthenticationResult"]["AccessToken"]);
+              setUser({
+                state: "AUTHENTICATED",
+                IdToken: response["AuthenticationResult"]["IdToken"],
+              });
+              // setUser(user["AuthenticationResult"]["IdToken"]);
               localStorage.setItem(
                 "user",
-                response["AuthenticationResult"]["AccessToken"]
+                JSON.stringify({
+                  state: "AUTHENTICATED",
+                  IdToken: response["AuthenticationResult"]["IdToken"],
+                })
               );
             } catch (error) {
               setUser(null);
