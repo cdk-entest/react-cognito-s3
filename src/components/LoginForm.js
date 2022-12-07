@@ -39,7 +39,7 @@ const LoginForm = ({ setAuth }) => {
         <Input
           padding={"20px"}
           margin={"20px"}
-          placeholder="Email"
+          placeholder="htranminhhai20@gmail.com"
           value={name}
           onChange={(event) => {
             setName(event.target.value);
@@ -47,7 +47,7 @@ const LoginForm = ({ setAuth }) => {
         ></Input>
         <Input
           padding={"20px"}
-          placeholder="Password"
+          placeholder="Mc@122022"
           value={pass}
           onChange={(event) => {
             setPass(event.target.value);
