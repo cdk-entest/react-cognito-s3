@@ -4,11 +4,12 @@ import * as cdk from "aws-cdk-lib";
 import { CognitoDemoStack } from "../lib/cognito-stack";
 import { ApigwStack } from "../lib/apigw-stack";
 import { ApigwLambdaHelloStack } from "../lib/apigw-lambda-hello-stack";
+import { WafApigwStack } from "../lib/waf-stack";
 
 const app = new cdk.App();
 
 // simple apigw and lambda integration demo
-new ApigwLambdaHelloStack(app, "ApigwLambdaHelloStack", {});
+const hellloAPI = new ApigwLambdaHelloStack(app, "ApigwLambdaHelloStack", {});
 
 // cognito userpool and identity pool
 const cognito = new CognitoDemoStack(app, "CognitoDemoStack", {});
@@ -16,7 +17,12 @@ const cognito = new CognitoDemoStack(app, "CognitoDemoStack", {});
 // apigateway and lambda
 const apigw = new ApigwStack(app, "ApigwStackDevClass", {
   userPool: cognito.userPool,
-  bucketArn: "arn:aws:s3:::cognito-demo-bucket-392194582387-1",
+  bucketArn: `arn:aws:s3:::cognito-demo-bucket-${process.env.CDK_DEFAULT_ACCOUNT}-1`,
+});
+
+// waf stack protect api gw
+const waf = new WafApigwStack(app, "WafProtectApiGw", {
+  resourceArns: hellloAPI.apiArns,
 });
 
 apigw.addDependency(cognito);

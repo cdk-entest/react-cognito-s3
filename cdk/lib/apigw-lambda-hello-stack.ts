@@ -16,6 +16,8 @@ import * as fs from "fs";
 import * as path from "path";
 
 export class ApigwLambdaHelloStack extends Stack {
+  public readonly apiArns: string[] = [];
+
   constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props);
 
@@ -32,6 +34,28 @@ export class ApigwLambdaHelloStack extends Stack {
       // readCapacity: 5,
       // writeCapacity: 10,
     });
+
+    // lambda query message - get request
+    const read_ddb_func = new aws_lambda.Function(
+      this,
+      "MCReadMessageTableFunction",
+      {
+        functionName: "MCReadMessageTableFunction",
+        code: aws_lambda.Code.fromInline(
+          fs.readFileSync(
+            path.resolve(__dirname, "./../lambda/query_message_handler.py"),
+            { encoding: "utf-8" }
+          )
+        ),
+        handler: "index.handler",
+        runtime: aws_lambda.Runtime.PYTHON_3_9,
+        memorySize: 512,
+        timeout: Duration.seconds(10),
+        environment: {
+          TABLE_NAME: messageTable.tableName,
+        },
+      }
+    );
 
     //  lambda - write message - post request handler
     const write_ddb_func = new aws_lambda.Function(
@@ -57,6 +81,7 @@ export class ApigwLambdaHelloStack extends Stack {
 
     // ddb grant access to lambda
     messageTable.grantReadWriteData(write_ddb_func);
+    messageTable.grantReadData(read_ddb_func);
 
     // role for api gateway
     const role = new aws_iam.Role(this, "RoleForApiGwInvokeLambda", {
@@ -68,7 +93,8 @@ export class ApigwLambdaHelloStack extends Stack {
       new aws_iam.PolicyStatement({
         effect: aws_iam.Effect.ALLOW,
         actions: ["lambda:InvokeFunction"],
-        resources: [write_ddb_func.functionArn],
+        // 500 error
+        resources: [write_ddb_func.functionArn, read_ddb_func.functionArn],
       })
     );
 
@@ -97,6 +123,45 @@ export class ApigwLambdaHelloStack extends Stack {
     //  integrate lambda with apigw
     const message = apigw.root.addResource("message");
 
+    // itegration apigw with lambda get methhod request template
+    message.addMethod(
+      "GET",
+      new aws_apigateway.LambdaIntegration(read_ddb_func, {
+        // 500 error
+        // proxy: true,
+        proxy: false,
+        allowTestInvoke: false,
+        credentialsRole: role,
+        // api input template request mapping
+        passthroughBehavior: PassthroughBehavior.WHEN_NO_TEMPLATES,
+        requestParameters: {},
+        requestTemplates: {
+          "application/json": fs.readFileSync(
+            path.resolve(__dirname, "./../template/request-template"),
+            {
+              encoding: "utf-8",
+            }
+          ),
+        },
+        integrationResponses: [
+          {
+            statusCode: "200",
+            responseTemplates: {
+              "application/json": fs.readFileSync(
+                path.resolve(__dirname, "./../template/response-template-get"),
+                {
+                  encoding: "utf-8",
+                }
+              ),
+            },
+          },
+        ],
+      }),
+      {
+        methodResponses: [{ statusCode: "200" }],
+      }
+    );
+
     //  integration
     message.addMethod(
       "POST",
@@ -115,10 +180,7 @@ export class ApigwLambdaHelloStack extends Stack {
             statusCode: "200",
             responseTemplates: {
               "application/json": fs.readFileSync(
-                path.resolve(
-                  __dirname,
-                  "./../template/response-template-lambda"
-                ),
+                path.resolve(__dirname, "./../template/response-template"),
                 { encoding: "utf-8" }
               ),
             },
@@ -156,5 +218,9 @@ export class ApigwLambdaHelloStack extends Stack {
       accessLogDestination: new aws_apigateway.LogGroupLogDestination(logGroup),
       accessLogFormat: aws_apigateway.AccessLogFormat.jsonWithStandardFields(),
     });
+
+    //
+
+    this.apiArns.push(prodStage.stageArn);
   }
 }
