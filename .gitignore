@@ -3,6 +3,14 @@
 
 **config.js
 
+cdk/test
+arch.drawio
+**.mp3 
+test 
+
+
+
+
 # dependencies
 /node_modules
 /.pnp
