@@ -4,6 +4,9 @@
 **config.js
 
 cdk/test
+cdk/README.md 
+cdk/.gitignore 
+cdk/.npmignore 
 arch.drawio
 **.mp3 
 test 
