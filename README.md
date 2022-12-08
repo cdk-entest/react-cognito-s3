@@ -1,15 +1,27 @@
 ---
+title: React Cognito Polly Demo
+description: build an react app with cognito auth and polly
 author: haimtran
-title: aws amplify demo using react js
-description: aws amplify demo using react js
-publishedDate: 02/12/2022
+publishedDate: 05/12/2022
+date: 2022-12-05
 ---
 
 ## Introduction
 
+[Github](https://github.com/cdk-entest/react-cognito-s3) shows how to build a simple react app with auth using cognito and text to speech using polly, also update images to s3 and message to a dynamodb table.
+
 - create a react app
 - use cognito to create account, confirm, sign in
 - auth session and s3 access
+- cal api polly (text to speech)
+- call api to CRUD DyamoDB table
+
+<LinkedImage
+  href="http://d2cvlmmg8c0xrp.cloudfront.net/react_cognito_polly_demo.mov"
+  height={400}
+  alt="React Cognito"
+  src="/thumbnail/kendra-search.png"
+/>
 
 ## Architecture
 
