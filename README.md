@@ -27,7 +27,6 @@ date: 2022-12-05
 
 ![react_cognito_polly](https://user-images.githubusercontent.com/20411077/206381082-4bfa79aa-fbef-4c35-9f9f-1c26c42d8db7.png)
 
-
 ## Create a React App
 
 create a react app
@@ -311,6 +310,65 @@ const processFile = async (file, setProgress) => {
   await uploadToS3Progress(user.IdToken, file, setProgress);
   // reload list of images
   await getImages();
+};
+```
+
+## Cognito Token and ApiGW Auth
+
+use cognito client to get token (access token and idtoken)
+
+```js
+const cognitoClient = new CognitoIdentityProviderClient({
+  region: config.REGION,
+});
+
+// authenticate and get token
+const response = await cognitoClient.send(
+  new InitiateAuthCommand({
+    AuthFlow: "USER_PASSWORD_AUTH",
+    AuthParameters: {
+      USERNAME: config.USERNAME,
+      PASSWORD: config.PASSWORD,
+    },
+    ClientId: config.CLIENT_ID,
+  })
+);
+
+console.log("auth res ", response["AuthenticationResult"]["IdToken"]);
+```
+
+pass the token into header Authorization to call and API
+
+```js
+const callApi = async () => {
+  const { data, status } = await axios.post(
+    config.API_URL_MESSAGE,
+    { message: "hello" },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${response["AuthenticationResult"]["IdToken"]}`,
+      },
+    }
+  );
+  console.log(data);
+  console.log(status);
+};
+
+callApi();
+```
+
+call and api endpoint to fetch messages from a dynamodb table using token for auth
+
+```js
+const testRequest = async () => {
+  const { data, status } = await axios.get(config.API_URL_TEST, {
+    headers: {
+      Authorization: `Bearer ${response["AuthenticationResult"]["IdToken"]}`,
+    },
+  });
+  console.log(data);
+  console.log(status);
 };
 ```
 
