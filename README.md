@@ -25,6 +25,9 @@ date: 2022-12-05
 
 ## Architecture
 
+![react_cognito_polly](https://user-images.githubusercontent.com/20411077/206381082-4bfa79aa-fbef-4c35-9f9f-1c26c42d8db7.png)
+
+
 ## Create a React App
 
 create a react app
