@@ -1,0 +1,4 @@
+#set($inputRoot = $input.path('$'))
+{ 
+    "event": "$inputRoot.body.event",
+}

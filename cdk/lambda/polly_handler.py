@@ -5,19 +5,27 @@ import boto3
 from contextlib import closing
 from botocore.exceptions import BotoCoreError, ClientError
 import uuid
+import json
+import os
+
 
 # bucket store audio file
-bucket = boto3.resource("s3").Bucket("cognito-demo-bucket-392194582387-1")
+bucket = boto3.resource("s3").Bucket(os.environ["BUCKET_NAME"])
 # table store url to audio file
-table = boto3.resource("dynamodb").Table("MessageTable")
+table = boto3.resource("dynamodb").Table(os.environ["TABLE_NAME"])
 
 def handler(event, context):
     """
     convert message to speech using amazon polly
     """
     # parset intput
-    message = event["message"]
-    file_name = event["file_name"]
+    try:
+        body = json.loads(event["body"])
+        message = body["message"]
+        file_name = body["file_name"]
+    except:
+        message = "hello"
+        file_name = "hello.mp3"
     # create client
     client = boto3.client("polly")
     # covert to speech
@@ -46,7 +54,8 @@ def handler(event, context):
                 table.put_item(
                     Item={
                         "id": str(uuid.uuid4()),
-                        "key": file_name
+                        "key": file_name,
+                        "message": message
                     }
                 )
             except IOError as error:
@@ -61,7 +70,7 @@ def handler(event, context):
             "Access-Control-Allow-Headers": "Content-Type",
             "Access-Control-Allow-Methods": "OPTIONS,GET"
         },
-        'body': file_name
+         'body': json.dumps({"file_name": file_name, "event": event})
     }
 
 if __name__=="__main__":
